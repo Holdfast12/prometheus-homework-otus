@@ -1,0 +1,5 @@
+./prometheus --config.file "prometheus.yml"
+
+- job_name: 'docker'
+    static_configs:
+      - targets: ['localhost:9323']
