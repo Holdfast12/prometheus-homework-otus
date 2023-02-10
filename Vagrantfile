@@ -5,8 +5,11 @@ Vagrant.configure("2") do |config|
     config.vm.provision "shell", inline: <<-SHELL
       sudo dnf install -y epel-release
       sudo dnf install -y wget screen
-      wget https://github.com/prometheus/prometheus/releases/download/v1.8.0/prometheus-1.8.0.darwin-amd64.tar.gz
+      cd /vagrant/
+      curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -qi -
       tar xvf prometheus-*.tar.gz
-      sudo chown vagrant:vagrant prometheus-*/
+      mv prometheus-*/ prometheus
+      sudo chown -R vagrant:vagrant ./prometheus
+      #/vagrant/prometheus/prometheus --config.file "/vagrant/prometheus/prometheus.yml"
     SHELL
 end
