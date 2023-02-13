@@ -1,2 +1,3 @@
 .vagrant/*
-prometheus-*.tar.gz
+*.tar.gz
+*.rpm
