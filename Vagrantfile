@@ -28,11 +28,6 @@ Vagrant.configure("2") do |config|
       sudo chown -R prometheus:prometheus /usr/local/bin/node_exporter
       sudo cp /vagrant/node_exporter.service /etc/systemd/system/node_exporter.service
 
-      #запуск
-      sudo systemctl daemon-reload
-      sudo systemctl enable prometheus --now
-      sudo systemctl enable node_exporter.service --now
-
       #grafana
       #sudo cp /vagrant/grafana.repo /etc/yum.repos.d/grafana.repo
       #sudo dnf -y install grafana
@@ -40,6 +35,11 @@ Vagrant.configure("2") do |config|
       sudo rpm -i /vagrant/grafana-9.3.6-1.x86_64.rpm
       sudo cp /vagrant/grafana-prometheus.yml /etc/grafana/provisioning/datasources/prometheus.yml
       sudo chown grafana:grafana /etc/grafana/provisioning/datasources/prometheus.yml
+
+      #запуск
+      sudo systemctl daemon-reload
+      sudo systemctl enable prometheus.service --now
+      sudo systemctl enable node_exporter.service --now
       sudo systemctl enable grafana-server.service --now
     SHELL
 end
