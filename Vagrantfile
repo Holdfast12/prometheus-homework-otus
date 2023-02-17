@@ -5,7 +5,9 @@ Vagrant.configure("2") do |config|
     config.vm.network "forwarded_port", guest: 3000, host: 3000
     config.vm.provision "shell", inline: <<-SHELL
       sudo dnf install -y epel-release
-      #sudo dnf install -y wget screen
+      sudo dnf module enable -y postgresql:13 && sudo dnf install -y postgresql-server postgresql-devel postgresql-contrib
+      sudo postgresql-setup --initdb
+      #sudo dnf install -y wget screen sqlite
       #curl -s https://api.github.com/repos/prometheus/prometheus/releases/latest | grep browser_download_url | grep linux-amd64 | cut -d '"' -f 4 | wget -qi -
 
       #установка сервиса (сервера) prometheus
@@ -28,6 +30,14 @@ Vagrant.configure("2") do |config|
       sudo chown -R prometheus:prometheus /usr/local/bin/node_exporter
       sudo cp /vagrant/node_exporter.service /etc/systemd/system/node_exporter.service
 
+      #установка postgres_exporter
+      tar xvf /vagrant/postgres_exporter-*.tar.gz -C /home/vagrant
+      mv /home/vagrant/postgres_exporter-*/ /home/vagrant/postgres_exporter
+      sudo cp /home/vagrant/postgres_exporter/postgres_exporter /usr/local/bin
+      sudo chown -R postgres:postgres /usr/local/bin/postgres_exporter
+      sudo cp /vagrant/postgres_exporter.service /etc/systemd/system/postgres_exporter.service
+
+
       #grafana
       #sudo cp /vagrant/grafana.repo /etc/yum.repos.d/grafana.repo
       #sudo dnf -y install grafana
@@ -41,5 +51,7 @@ Vagrant.configure("2") do |config|
       sudo systemctl enable prometheus.service --now
       sudo systemctl enable node_exporter.service --now
       sudo systemctl enable grafana-server.service --now
+      sudo systemctl enable postgresql --now
+      sudo systemctl enable postgres_exporter.service --now
     SHELL
 end
